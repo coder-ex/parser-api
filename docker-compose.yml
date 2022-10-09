@@ -1,0 +1,55 @@
+version: "3.5"
+
+services:
+  php:
+    build: ./docker/php-fpm
+    container_name: elmikeev-php-fpm
+    image: elmikeev_api/php-fpm
+    volumes:
+      - ${PATH_HOST}:${PATH_CONTAINER}
+      #- ${PATH_HOST}/auth.json:/home/www-data/.config/composer/auth.json
+      - ${PATH_SERVICE}/logs/xdebug:/var/log/xdebug
+    working_dir: ${PATH_CONTAINER}
+    environment:
+      XDEBUG_CONFIG: "client_host=192.168.222.1 start_with_request=no client_port=9008"
+      XDEBUG_SESSION: "PHPVCS"
+      PHP_IDE_CONFIG: "serverName=school-server"
+    ports:
+#      - "25:25"
+#      - "587:587"
+#      - "2525:2525" # данный порт используется в том случае, если интернет провайдер фильтрует порт 25
+      - "9010:9000"
+      - "8010:8000"
+    networks:
+      - app_net
+
+  nginx:
+    build:
+      context: docker/nginx
+    image: elmikeev_api/http-nginx
+    container_name: elmikeev-http-nginx
+    depends_on:
+      - php
+    volumes:
+      - ${PATH_HOST}:${PATH_CONTAINER}
+      - ${PATH_SERVICE}/logs/nginx:/var/log/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      app_net:
+        aliases:
+          - school.loc
+
+volumes:
+  pg_data:
+  postgres:
+    driver: local
+
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.222.0/28

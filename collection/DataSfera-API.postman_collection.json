@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "995b7176-69db-4838-9c3c-45710887f42d",
+		"name": "DataSfera-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "массовое добваление задач",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"api_name\":\"wb\",\n        \"project_id\":\"42a3fab5-bee1-53e1-b2c1-aed0efd52fd0\",\n        \"name\":\"ae\",\n        \"secret\":\"NTAyYmI3MmYtOWZkMS00YzM1LTkwMmQtNGQzZTJlMTUwMzU3\",\n        \"dateFrom\":\"2022-01-01\",\n        \"start_time\":\"00:00\",\n        \"extended_fields\":{\n            \"flag\":0,\n            \"limit\":10000\n        }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://school.loc/api/export/all",
+					"protocol": "http",
+					"host": [
+						"school",
+						"loc"
+					],
+					"path": [
+						"api",
+						"export",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "добваление задачи",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"api_name\":\"ozon-performance\",\n        \"project_id\":\"2874816-1663139014571@advertising.performance.ozon.ru\",\n        \"name\":\"aqua\",\n        \"secret\":\"PpyewLHIh13rIvdPqBwaMVi8RRkT9LKKcW_nAwEHdwVudBQKoaTamu_4jJCkbYPldu6zoJLnwoRBdtOMcA\",\n        \"task\":\"statistics-media-compaign\",\n        \"dateFrom\":\"2022-01-01\",\n        \"start_time\":\"00:00\",\n        \"extended_fields\":{\n            \"flag\":0,\n            \"limit\":10000\n        }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://school.loc/api/export",
+					"protocol": "http",
+					"host": [
+						"school",
+						"loc"
+					],
+					"path": [
+						"api",
+						"export"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "получение описания формата",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://school.loc/api/help",
+					"protocol": "http",
+					"host": [
+						"school",
+						"loc"
+					],
+					"path": [
+						"api",
+						"help"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,12 @@
+Ира, [11.07.2022 18:33] Telegram
+@kkw70
+Надо выгрузить все данные по кабинету по всем методам из документа сервиса статистики:
+адресс - https://images.wbstatic.net/portal/education/Kak_rabotat'_s_servisom_statistiki.pdf?abc=1612952230000
+документ - Kak_rabotat'_s_servisom_statistiki.pdf
+токен - XXXXX
+
+данные по токенам находятся в файле ./doc/secret_tz
+на github выкладываться не будут
+
+предлагается использование описание API в Kak_rabotat'_s_servisom_statistiki.pdf
+лучше использовать https://openapi.wildberries.ru/#tag/Statistika/paths/~1api~1v1~1supplier~1excise-goods/get

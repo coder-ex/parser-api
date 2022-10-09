@@ -1,0 +1,8 @@
+/**/.idea/
+/**/.vscode/
+/.git/
+/service/
+/tmp-src/
+/doc/**/readmy
+/doc/**/secret_tz
+/doc/secret_server

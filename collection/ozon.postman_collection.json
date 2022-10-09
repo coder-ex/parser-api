@@ -1,0 +1,438 @@
+{
+	"info": {
+		"_postman_id": "3bdad9f1-2488-44e1-ad6f-420e2145faa4",
+		"name": "ozon",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Информация о количестве товаров",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Client-Id",
+						"value": "28915",
+						"type": "default"
+					},
+					{
+						"key": "Api-Key",
+						"value": "d80ea237-4cf5-4ba2-a88c-f6040f7a9b2c",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"filter\": {\n    \"offer_id\": [],\n    \"product_id\": [],\n    \"visibility\": \"ALL\"\n  },\n  \"last_id\": \"\",\n  \"limit\": 1000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-seller.ozon.ru/v3/product/info/stocks",
+					"protocol": "https",
+					"host": [
+						"api-seller",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"v3",
+						"product",
+						"info",
+						"stocks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Список отправлений",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Client-Id",
+						"value": "28915",
+						"type": "default"
+					},
+					{
+						"key": "Api-Key",
+						"value": "d80ea237-4cf5-4ba2-a88c-f6040f7a9b2c",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"dir\": \"ASC\",\n  \"filter\": {\n    \"since\": \"2021-09-01T00:00:00.000Z\",\n    \"status\": \"\",\n    \"to\": \"2021-11-17T10:44:12.828Z\"\n  },\n  \"limit\": 5,\n  \"offset\": 0,\n  \"translit\": true,\n  \"with\": {\n    \"analytics_data\": true,\n    \"financial_data\": true\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-seller.ozon.ru/v2/posting/fbo/list",
+					"protocol": "https",
+					"host": [
+						"api-seller",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"v2",
+						"posting",
+						"fbo",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Список товаров по идентификаторам",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Client-Id",
+						"value": "28915",
+						"type": "default"
+					},
+					{
+						"key": "Api-Key",
+						"value": "d80ea237-4cf5-4ba2-a88c-f6040f7a9b2c",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"offer_id\": [\n    \"114590\",\n    \"114584\"\n  ],\n  \"product_id\": [],\n  \"sku\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-seller.ozon.ru/v2/product/info/list",
+					"protocol": "https",
+					"host": [
+						"api-seller",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"v2",
+						"product",
+						"info",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Api Token для performance.ozon.ru",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\n{\n    \"client_id\":\"2874816-1663139014571@advertising.performance.ozon.ru\", \n    \"client_secret\":\"PpyewLHIh13rIvdPqBwaMVi8RRkT9LKKcW_nAwEHdwVudBQKoaTamu_4jJCkbYPldu6zoJLnwoRBdtOMcA\", \n    \"grant_type\":\"client_credentials\"\n}"
+				},
+				"url": {
+					"raw": "https://performance.ozon.ru/api/client/token",
+					"protocol": "https",
+					"host": [
+						"performance",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"api",
+						"client",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Список кампаний п.1",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1IiwiZXhwIjoxNjY0NTYzODA1LCJpYXQiOjE2NjQ1NjIwMDUsImlzcyI6InBlcmZvcm1hbmNlLWF1dGgub3pvbi5ydSIsInN1YiI6IjI4NzQ4MTYtMTY2MzEzOTAxNDU3MUBhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1In0.c0fFCZO_YtoNw_9xZxyIGj7JCk5HuV3EHVzZyZEM3fw",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "https://performance.ozon.ru/api/client/campaign?client_secret=PpyewLHIh13rIvdPqBwaMVi8RRkT9LKKcW_nAwEHdwVudBQKoaTamu_4jJCkbYPldu6zoJLnwoRBdtOMcA&client_id=2874816-1663139014571@advertising.performance.ozon.ru&advObjectType=SKU&state=CAMPAIGN_STATE_UNKNOWN",
+					"protocol": "https",
+					"host": [
+						"performance",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"api",
+						"client",
+						"campaign"
+					],
+					"query": [
+						{
+							"key": "client_secret",
+							"value": "PpyewLHIh13rIvdPqBwaMVi8RRkT9LKKcW_nAwEHdwVudBQKoaTamu_4jJCkbYPldu6zoJLnwoRBdtOMcA"
+						},
+						{
+							"key": "client_id",
+							"value": "2874816-1663139014571@advertising.performance.ozon.ru"
+						},
+						{
+							"key": "advObjectType",
+							"value": "SKU"
+						},
+						{
+							"key": "state",
+							"value": "CAMPAIGN_STATE_UNKNOWN"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Список рекламируемых объектов в кампании п.2",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1IiwiZXhwIjoxNjY0NDYyNDUwLCJpYXQiOjE2NjQ0NjA2NTAsImlzcyI6InBlcmZvcm1hbmNlLWF1dGgub3pvbi5ydSIsInN1YiI6IjI4NzQ4MTYtMTY2MzEzOTAxNDU3MUBhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1In0.vPmD8XuvYjGIfDTXMsVgb-Pg-fBu-ONoFwGeI96tbLw",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "https://performance.ozon.ru:443/api/client/campaign/215469/objects",
+					"protocol": "https",
+					"host": [
+						"performance",
+						"ozon",
+						"ru"
+					],
+					"port": "443",
+					"path": [
+						"api",
+						"client",
+						"campaign",
+						"215469",
+						"objects"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Статистика по медийным кампаниям п.3",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1IiwiZXhwIjoxNjY0NTA4Mzc4LCJpYXQiOjE2NjQ1MDY1NzgsImlzcyI6InBlcmZvcm1hbmNlLWF1dGgub3pvbi5ydSIsInN1YiI6IjI4NzQ4MTYtMTY2MzEzOTAxNDU3MUBhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1In0.rLtKNw0pO2J2RhV7fSmNPUNCblwbWlBVxORUWWoYAmM",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "https://performance.ozon.ru/api/client/statistics/campaign/media",
+					"protocol": "https",
+					"host": [
+						"performance",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"api",
+						"client",
+						"statistics",
+						"campaign",
+						"media"
+					],
+					"query": [
+						{
+							"key": "campaignIds",
+							"value": "215469",
+							"disabled": true
+						},
+						{
+							"key": "dateFrom",
+							"value": "2022-01-01",
+							"disabled": true
+						},
+						{
+							"key": "dateTo",
+							"value": "2022-09-29",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Статистика по продуктовым кампаниям п.4",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1IiwiZXhwIjoxNjY0NjUxODc5LCJpYXQiOjE2NjQ2NTAwNzksImlzcyI6InBlcmZvcm1hbmNlLWF1dGgub3pvbi5ydSIsInN1YiI6IjI4NzQ4MTYtMTY2MzEzOTAxNDU3MUBhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1In0.cyOPT5Av16HPpZRC97SUZKiAh-XLzg2vM8y9ZO92qvw",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "https://performance.ozon.ru/api/client/statistics/campaign/product?from=2022-09-01T00:00:00.000Z&to=2022-09-30T23:59:59.000Z",
+					"protocol": "https",
+					"host": [
+						"performance",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"api",
+						"client",
+						"statistics",
+						"campaign",
+						"product"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "2022-09-01T00:00:00.000Z"
+						},
+						{
+							"key": "to",
+							"value": "2022-09-30T23:59:59.000Z"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Статистика по расходу кампаний п.5",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1IiwiZXhwIjoxNjY0Njk0NDMyLCJpYXQiOjE2NjQ2OTI2MzIsImlzcyI6InBlcmZvcm1hbmNlLWF1dGgub3pvbi5ydSIsInN1YiI6IjI4NzQ4MTYtMTY2MzEzOTAxNDU3MUBhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1In0.8dOQzFVnCZBJoH1ZGPDCt4F-nwFmgnyESTyxlHo5hN8",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "https://performance.ozon.ru/api/client/statistics/expense?dateFrom=2022-09-30&dateTo=2022-10-02",
+					"protocol": "https",
+					"host": [
+						"performance",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"api",
+						"client",
+						"statistics",
+						"expense"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2022-09-30"
+						},
+						{
+							"key": "dateTo",
+							"value": "2022-10-02"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Дневная статистика по кампаниям п.6",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1IiwiZXhwIjoxNjY0NjkzNzA2LCJpYXQiOjE2NjQ2OTE5MDYsImlzcyI6InBlcmZvcm1hbmNlLWF1dGgub3pvbi5ydSIsInN1YiI6IjI4NzQ4MTYtMTY2MzEzOTAxNDU3MUBhZHZlcnRpc2luZy5wZXJmb3JtYW5jZS5vem9uLnJ1In0.2J2CzxBtGETulnSZbrAeB87ojs-DVP_-8CWlc1Oeho8",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "https://performance.ozon.ru/api/client/statistics/daily?dateFrom=2022-10-02&dateTo=2022-10-03",
+					"protocol": "https",
+					"host": [
+						"performance",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"api",
+						"client",
+						"statistics",
+						"daily"
+					],
+					"query": [
+						{
+							"key": "client_secret",
+							"value": "PpyewLHIh13rIvdPqBwaMVi8RRkT9LKKcW_nAwEHdwVudBQKoaTamu_4jJCkbYPldu6zoJLnwoRBdtOMcA",
+							"disabled": true
+						},
+						{
+							"key": "client_id",
+							"value": "2874816-1663139014571@advertising.performance.ozon.ru",
+							"disabled": true
+						},
+						{
+							"key": "dateFrom",
+							"value": "2022-10-02"
+						},
+						{
+							"key": "dateTo",
+							"value": "2022-10-03"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
