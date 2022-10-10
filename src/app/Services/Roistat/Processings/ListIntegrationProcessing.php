@@ -46,7 +46,7 @@ class ListIntegrationProcessing extends BaseProcessing
         //--- получим массив за опорную дату, что бы выбрать из этой даты то, чего нет в базе
         $range = DB::connection($this->typeDB)->table($this->table)
             ->where('project_id', $project)
-            ->where('creation_date', '=', $this->oldData['creation_date'])
+            ->where('creation_date', '=', $this->oldData[$field])
             ->orderBy($field, 'desc')->get();
 
         //--- найдем в последней дате старого массива новые элементы
@@ -116,7 +116,7 @@ class ListIntegrationProcessing extends BaseProcessing
         $sysName_3lev = is_null($sysName) ? null : $this->create3LevSource($sysName);
 
         //--- проверяем roistat на число или нет
-        if (!empty($roistat[0]) & is_numeric($roistat[0])) {    // если $roistat is number
+        if (!empty($roistat[0]) && is_numeric($roistat[0])) {   // если $roistat is number
             if (!empty($sysName_3lev)) {                        // если sysName_3lev != null
                 $item['marker'] = $sysName_3lev;
                 $item['marker_id'] = $this->addChannels("roistat_{$nameTask}_catalog_markers", $dispName, $sysName_3lev, $dispName_3lev);

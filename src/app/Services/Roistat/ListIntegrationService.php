@@ -73,12 +73,14 @@ class ListIntegrationService extends BaseService implements InterfaceService
                         [
                             "creation_date",
                             ">",
-                            date('Y-m-dTH:i:s', strtotime($from))
+                            $this->formatDate(date: $from, timezoneId: 'UTC')
+                            //date('Y-m-dTH:i:s', strtotime($from))
                         ],
                         [
                             "creation_date",
                             "<",
-                            date('Y-m-dTH:i:s', strtotime($to)),
+                            $this->formatDate(date: $to, timezoneId: 'UTC')
+                            //date('Y-m-dTH:i:s', strtotime($to)),
                         ],
                         [
                             "status",
@@ -101,7 +103,7 @@ class ListIntegrationService extends BaseService implements InterfaceService
         $total = $this->fetchToAPIOne($url, $body, $header)->total;
 
         if ($total == 0) {
-            echo "на участке from: ", date('Y-m-d H:i:s', strtotime($from)), " | to: ", date('Y-m-d H:i:s', strtotime($to)), " размер данных == 0\n";
+            echo "на участке from: ", $this->formatDate(date: $from, timezoneId: 'UTC'), " | to: ", $this->formatDate(date: $to, timezoneId: 'UTC'), " размер данных == 0\n";
             $journal->upTask('OK', 'размер данных == 0');     // обновим запись в журнале
             return;
         }
@@ -123,12 +125,14 @@ class ListIntegrationService extends BaseService implements InterfaceService
                             [
                                 "creation_date",
                                 ">",
-                                date('Y-m-dTH:i:s', strtotime($from))
+                                //date('Y-m-dTH:i:s', strtotime($from))
+                                $this->formatDate(date: $from, timezoneId: 'UTC')
                             ],
                             [
                                 "creation_date",
                                 "<",
-                                date('Y-m-dTH:i:s', strtotime($to)),
+                                //date('Y-m-dTH:i:s', strtotime($to)),
+                                $this->formatDate(date: $to, timezoneId: 'UTC')
                             ],
                             [
                                 "status",

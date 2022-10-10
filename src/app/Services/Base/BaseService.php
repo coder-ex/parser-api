@@ -67,6 +67,20 @@ abstract class BaseService
         return date('Y-m-d H:i:s', strtotime($from));                   // если данных нет в кеше и в таблицах, то получим с установленной даты для задачи в планировщике
     }
 
+    /**
+     * форматирование даты под DateTime и таймзону
+     *
+     * @param string $date дата/время
+     * @param [type] $format формат даты/время в RFC
+     * @param string $timezoneId используемая таймзона
+     * @return void
+     */
+    function formatDate(string $date, ?string $format = \DateTime::RFC3339, ?string $timezoneId = 'Europe/Moscow')
+    {
+        date_default_timezone_set($timezoneId);                     // для коррекции тайм-зоны
+        return date($format, strtotime($date));
+    }
+
     /*
     public function createUrl(string $apiURL, string $task, ?string $secret = '', ?string $project = '', ?string $from = '', ?string $to = ''): string|null
     {
