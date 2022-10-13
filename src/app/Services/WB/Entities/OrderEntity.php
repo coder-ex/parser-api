@@ -30,5 +30,7 @@ class OrderEntity extends BaseEntity
         $table->dateTime('cancel_dt', 0)->nullable();
         $table->string('gNumber', 50)->nullable();
         $table->string('sticker', 50)->nullable();
+
+    $table->unique(['odid', 'lastChangeDate']/*, 'fk_orders_odid_lastChangeDate'*/);    // убрал название ключа т.к. будут проблемы с другими таблицами
     }
 }

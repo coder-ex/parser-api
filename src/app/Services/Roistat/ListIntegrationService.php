@@ -74,13 +74,11 @@ class ListIntegrationService extends BaseService implements InterfaceService
                             "creation_date",
                             ">",
                             $this->formatDate(date: $from, timezoneId: 'UTC')
-                            //date('Y-m-dTH:i:s', strtotime($from))
                         ],
                         [
                             "creation_date",
                             "<",
                             $this->formatDate(date: $to, timezoneId: 'UTC')
-                            //date('Y-m-dTH:i:s', strtotime($to)),
                         ],
                         [
                             "status",
@@ -125,13 +123,11 @@ class ListIntegrationService extends BaseService implements InterfaceService
                             [
                                 "creation_date",
                                 ">",
-                                //date('Y-m-dTH:i:s', strtotime($from))
                                 $this->formatDate(date: $from, timezoneId: 'UTC')
                             ],
                             [
                                 "creation_date",
                                 "<",
-                                //date('Y-m-dTH:i:s', strtotime($to)),
                                 $this->formatDate(date: $to, timezoneId: 'UTC')
                             ],
                             [

@@ -135,6 +135,71 @@
 			"response": []
 		},
 		{
+			"name": "NEW Отчёт об остатках п.1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Client-Id",
+						"value": "28915",
+						"type": "default"
+					},
+					{
+						"key": "Api-Key",
+						"value": "d80ea237-4cf5-4ba2-a88c-f6040f7a9b2c",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"language\": \"DEFAULT\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-seller.ozon.ru/v1/report/stock/create",
+					"protocol": "https",
+					"host": [
+						"api-seller",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"v1",
+						"report",
+						"stock",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NEW Информация об отчёте п.2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api-seller.ozon.ru/v1/report/info",
+					"protocol": "https",
+					"host": [
+						"api-seller",
+						"ozon",
+						"ru"
+					],
+					"path": [
+						"v1",
+						"report",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Api Token для performance.ozon.ru",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {

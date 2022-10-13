@@ -97,9 +97,9 @@ class FboListService extends BaseService implements InterfaceService
                 [
                     "dir" => "ASC",
                     "filter" => [
-                        "since" => formatDateTo($from, 'Y-m-d\TH:i:s.v\Z', 'UTC'),
+                        "since" => $this->formatDate($from, 'Y-m-d\TH:i:s.v\Z', 'UTC'),
                         "status" => "",
-                        "to" => formatDateTo($to, 'Y-m-d\TH:i:s.v\Z', 'UTC'),
+                        "to" => $this->formatDate($to, 'Y-m-d\TH:i:s.v\Z', 'UTC'),
                     ],
                     "limit" => $limit,
                     "offset" => $offset,

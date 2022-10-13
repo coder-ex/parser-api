@@ -73,9 +73,9 @@ abstract class BaseService
      * @param string $date дата/время
      * @param [type] $format формат даты/время в RFC
      * @param string $timezoneId используемая таймзона
-     * @return void
+     * @return string
      */
-    function formatDate(string $date, ?string $format = \DateTime::RFC3339, ?string $timezoneId = 'Europe/Moscow')
+    public function formatDate(string $date, ?string $format = \DateTime::RFC3339, ?string $timezoneId = 'Europe/Moscow'): string
     {
         date_default_timezone_set($timezoneId);                     // для коррекции тайм-зоны
         return date($format, strtotime($date));

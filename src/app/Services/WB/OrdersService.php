@@ -2,7 +2,7 @@
 
 namespace App\Services\WB;
 
-use App\Repositories\Base\Repository;
+use App\Repositories\WB\WbRepository;
 use App\Services\Base\BaseService;
 use App\Services\Base\InterfaceService;
 use App\Services\Export\JournalService;
@@ -21,7 +21,7 @@ class OrdersService extends BaseService implements InterfaceService
      * @param [type] $repository
      */
     public function __construct(
-        private Repository $repository = new Repository(),
+        private WbRepository $repository = new WbRepository(),
     ) {
         parent::__construct();
         date_default_timezone_set('UTC');   // Ozon работает по UTC
@@ -53,7 +53,16 @@ class OrdersService extends BaseService implements InterfaceService
         $journal = new JournalService($typeDB, $project, $task);
         $journal->startTask();
 
-        $from = $this->getDateFrom($table, $typeDB,  $project, $from, $processing->classIsField($task), 'Europe/Moscow');
+        //--- если в БД есть история, то сдвигаем стартовую дату на 1 неделю назад от даты/время последней выгрузки
+        $from = $this->formatDate($from, timezoneId: 'Europe/Moscow');      // приведем все к одной величине
+        $fromT = $this->getDateFrom($table, $typeDB,  $project, $from, $processing->classIsField($task), 'Europe/Moscow');
+
+        if (strtotime($from) < strtotime($fromT)) {                         // если история есть, сдвигаем старотовую дату на 1 неделю назад, что бы гарантировано забрать все изменения
+            $from = date('Y-m-d', strtotime($fromT) - 604800);
+        } else {                                                            // иначе забираем с даты старта из планировщика
+            $from = $fromT;
+        }
+
         $url = $this->createUrl($urlAPI, $secret, $task, $from, $flag);
 
         $dataDB = [];
@@ -65,8 +74,8 @@ class OrdersService extends BaseService implements InterfaceService
             // проверка данных в БД и того, что получили
             $newDataDB = $processing->check($dataDB, $project);
 
-            foreach (array_chunk($newDataDB, 1000) as $unit) {
-                $this->repository->insertTable($table, $typeDB, $unit);
+            foreach (array_chunk($newDataDB, 1000) as $chunk) {
+                $this->repository->upsertTable($table, $typeDB, $chunk);
             }
         } catch (Exception | ErrorException $e) {
             $journal->upTask('ERROR', $e->getMessage());
