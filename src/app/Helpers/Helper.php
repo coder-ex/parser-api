@@ -22,6 +22,7 @@ function getArrayTask(string $apiName): array|null
         return [
             TypeTask::StockWarehouses->value,
             TypeTask::FboList->value,
+            TypeTask::ReportStocks->value,
         ];
     } elseif ($apiName === 'ozon-performance') {
         return [
@@ -77,6 +78,8 @@ function getApiParam(string $task, string $name): array|null
         // ozon
         'stock-warehouses' => ['apiName' => 'ozon', 'table' => 'ozon_' . strtolower($name) . '_stock_warehouses'],
         'fbo-list' => ['apiName' => 'ozon', 'table' => 'ozon_' . strtolower($name) . '_fbo_lists'],
+        'report-stocks' => ['apiName' => 'ozon', 'table' => 'ozon_' . strtolower($name) . '_report_stocks'],
+        //--- ozon-performance
         'campaign' => ['apiName' => 'ozon-performance', 'table' => 'ozon_' . strtolower($name) . '_campaign'],
         'statistics-daily' => ['apiName' => 'ozon-performance', 'table' => 'ozon_' . strtolower($name) . '_statistics_daily'],
         'statistics-media-compaign' => ['apiName' => 'ozon-performance', 'table' => 'ozon_' . strtolower($name) . '_campaign_media'],

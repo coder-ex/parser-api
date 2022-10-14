@@ -9,8 +9,10 @@ use App\Services\Ozon\Entities\CampaignExpenseEntity;
 use App\Services\Ozon\Entities\CampaignFoodEntity;
 use App\Services\Ozon\Entities\CampaignMediaEntity;
 use App\Services\Ozon\Entities\CampaignObjectEntity;
+use App\Services\Ozon\Entities\CatalogReportStockEntity;
 use App\Services\Ozon\Entities\FboListEntity;
 use App\Services\Ozon\Entities\ProductEntity;
+use App\Services\Ozon\Entities\ReportStockEntity;
 use App\Services\Ozon\Entities\StatGetReportEntity;
 use App\Services\Ozon\Entities\StatisticsDailyEntity;
 use App\Services\Ozon\Entities\StockWarehouseEntity;
@@ -140,13 +142,6 @@ class ExportController extends Controller
 
     public function getHelp(string $api = null)
     {
-        // $name = null;
-        // if ($api === 'none') {
-        //     foreach ($this->apiName as $el) {
-        //         $name[] = [$el => getArrayTask($el)];
-        //     }
-        // }
-        //---
         return response()->json(['success' => [...$this->description($api)]], 200);
     }
 
@@ -284,6 +279,10 @@ class ExportController extends Controller
         $entity = new ProductEntity($this->typeDB, $name, 'ozon', 'products', 'fbo_lists');
         $entity->up();
         $entity = new StockWarehouseEntity($this->typeDB, $name, 'ozon', 'stock_warehouses');
+        $entity->up();
+        $entity = new ReportStockEntity($this->typeDB, $name, 'ozon', 'report_stocks');             // ставим впереди т.к. это связь с catalog_report_stocks
+        $entity->up();
+        $entity = new CatalogReportStockEntity($this->typeDB, $name, 'ozon', 'catalog_report_stocks', 'report_stocks');
         $entity->up();
         unset($entity);
     }

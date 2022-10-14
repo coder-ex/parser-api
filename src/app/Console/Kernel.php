@@ -166,6 +166,13 @@ class Kernel extends ConsoleKernel
                             }
                         )->dailyAt($tasks[$i]->start_time) //->everySixHours()
                     ],
+                    TypeTask::ReportStocks->value => [
+                        $schedule->call(
+                            function () use ($tasks, $i, $store, $typeDB, $table) {
+                                OZONProcess::dispatchAfterResponse($table, $typeDB, $tasks[$i]->url, $store->project_id, $store->secret, $tasks[$i]->task, $tasks[$i]->dateFrom);
+                            }
+                        )->dailyAt($tasks[$i]->start_time) //->everySixHours()
+                    ],
 
                     default => null,
                 };

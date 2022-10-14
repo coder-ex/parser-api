@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Helpers\TypeTask;
 use App\Services\Ozon\CampaignService;
 use App\Services\Ozon\FboListService;
+use App\Services\Ozon\ReportStockService;
 use App\Services\Ozon\StatDailyService;
 use App\Services\Ozon\StatExpenseCampaignService;
 use App\Services\Ozon\StatFoodCampaignService;
@@ -56,6 +57,7 @@ class OZONProcess implements ShouldQueue
             TypeTask::StatMediaCampaign->value => (new StatMediaCampaignService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
             TypeTask::StatFoodCampaign->value => (new StatFoodCampaignService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
             TypeTask::StatExpenseCampaign->value => (new StatExpenseCampaignService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
+            TypeTask::ReportStocks->value => (new ReportStockService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task),
         };
     }
 }

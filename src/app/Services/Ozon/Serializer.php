@@ -23,9 +23,10 @@ class Serializer
      *
      * @param array|stdClass &$data исходный массив с данными
      * @param integer $projectId id проекта
+     * @param array|null $name
      * @return array
      */
-    public function serialize(stdClass|array $data, string|int|null $projectId): array|null
+    public function serialize(stdClass|array $data, string|int|null $projectId, ?array $name=null): array|null
     {
         if ($this->task === 'stock-warehouses') {
             return $this->serializeStockWarehouses($data, $projectId);
@@ -35,13 +36,47 @@ class Serializer
             return $this->serializeCampaign($data, $projectId);
         } elseif ($this->task === 'statistics-daily') {
             return $this->serializeStatDaily($data, $projectId);
-        } elseif($this->task === 'statistics-media-compaign') {
+        } elseif ($this->task === 'statistics-media-compaign') {
             return $this->serializeStatMediaCampaign($data, $projectId);
-        } elseif($this->task === 'statistics-food-compaign') {
+        } elseif ($this->task === 'statistics-food-compaign') {
             return $this->serializeStatFoodCampaign($data, $projectId);
-        } elseif($this->task === 'statistics-expense-compaign') {
+        } elseif ($this->task === 'statistics-expense-compaign') {
             return $this->serializeStatExpenseCampaign($data, $projectId);
+        } elseif ($this->task === 'report-stocks') {
+            return $this->serializeReportStocks($data, $projectId, $name);
         }
+    }
+
+    private function serializeReportStocks(array $data, string $projectId, array $name): array
+    {
+        if (count($data) == 0) return $data;
+
+        $res = [];
+        try {
+            $res['project_id'] = $projectId;
+            $res['published_at'] = date('Y-m-d');
+            $res['article'] = $data[0] ?? null;
+            $res['product_id'] = (int)$data[1] ?? null;
+            $res['sku_id'] = (int)$data[2] ?? null;
+            $res['product_name'] = $data[3] ?? null;
+            $res['barcode'] = (int)$data[4] ?? null;
+            $res['product_status'] = $data[5] ?? null;
+            $res['site_visibility'] = $data[6] ?? null;
+            $res['total_warehouse'] = (int)$data[7] ?? null;
+            $res['total_reserv'] = (int)$data[8] ?? null;
+
+            $array = [];
+            foreach ($data as $key => $value) {
+                if ($key < 9) continue;
+                $array[] = ['name' => $name[$key], 'value'=> $value];
+            }
+
+            $res['catalog_json'] = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        } catch (Exception | ErrorException $e) {
+            throw $e;
+        }
+        //---
+        return $res;
     }
 
     private function serializeStatExpenseCampaign(array $data, string|int $projectId): array
@@ -70,7 +105,7 @@ class Serializer
         $res = [];
         try {
             $res['project_id'] = $projectId;
-            $res['published_at'] = $data[0] ?? null; 
+            $res['published_at'] = $data[0] ?? null;
             $res['campaign_id'] = $data[1] ?? null;
             $res['title'] = $data[2] ?? null;
             $res['status'] = $data[3] ?? null;
@@ -99,7 +134,7 @@ class Serializer
         $res = [];
         try {
             $res['project_id'] = $projectId;
-            $res['published_at'] = $data[0] ?? null; 
+            $res['published_at'] = $data[0] ?? null;
             $res['campaign_id'] = $data[1] ?? null;
             $res['title'] = $data[2] ?? null;
             $res['format'] = $data[3] ?? null;
@@ -123,7 +158,7 @@ class Serializer
         return $res;
     }
 
-     private function serializeStatDaily(array $data, string|int $projectId): array
+    private function serializeStatDaily(array $data, string|int $projectId): array
     {
         if (count($data) == 0) return $data;
 

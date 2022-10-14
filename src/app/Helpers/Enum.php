@@ -33,6 +33,7 @@ enum TypeTask: string
         //--- ozon
     case StockWarehouses = 'stock-warehouses';
     case FboList = 'fbo-list';
+    case ReportStocks = 'report-stocks';
         //--- ozon-performance
     case Campaign = 'campaign';
     case StatDaily = 'statistics-daily';

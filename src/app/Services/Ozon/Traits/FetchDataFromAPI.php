@@ -12,6 +12,54 @@ trait FetchDataFromAPI
 {
     protected int $attempts = 100;
 
+    /**
+     * Undocumented function
+     *
+     * @param string $url полный url запроса
+     * @param string $body тело запроса
+     * @param array $header заголовок запроса
+     * @return string
+     */
+    protected function fetchToAPIOzonOne(string $url, string $body, array $header)
+    {
+        //--- проблемы с памятью
+        $time_limit = ini_get('max_execution_time');
+        $memory_limit = ini_get('memory_limit');
+        set_time_limit(0);
+        ini_set('memory_limit', '1024M');
+
+        $count = 0;
+        do {
+            $options = ['connect_timeout' => 30, 'timeout' => 120];
+            $response = Http::withOptions($options)->withHeaders($header)->withBody($body, 'application/json')->post($url);
+
+            if ($response->status() >= 400) {
+                if ($response->status() == 403) {
+                    throw new AuthException('The token is rotten', 403);
+                } elseif ($response->status() == 404) {
+                    throw new Http404Exception('Not Found', 404);
+                } elseif ($response->status() == 429 || $response->status() == 500) {     // error 429 слишком много запросов / error 500 сервер не доступен
+                    if ($count > $this->attempts) {
+                        $response->throw();
+                    }
+
+                    sleep(5);   // делаем паузу в 5 сек для тестироания
+                    $count++;
+
+                    echo "N. ", $count, " | вышли на повторный запрос 429 | 500 \n";
+
+                    continue;
+                } else {                                // какая то неизвестная ошибка
+                    $response->throw();
+                }
+            }
+
+            return $response->body();
+
+            break;
+        } while (true);
+    }
+
     protected function fetchToAPIFile(string $url, array $header)
     {
         //--- проблемы с памятью

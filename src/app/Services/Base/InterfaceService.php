@@ -23,7 +23,7 @@ interface InterfaceService
      *  - новые параметры создавать необязательными
      *  - делать обязательный параметр необязательным
      *
-     * @param string $urlAPI
+     * @param string $urlAPI шаблон url от API
      * @return string
      */
     public function createUrl(string $urlAPI): string;
