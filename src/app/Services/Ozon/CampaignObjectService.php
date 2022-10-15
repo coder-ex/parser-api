@@ -44,7 +44,7 @@ class CampaignObjectService extends BaseService implements InterfaceService
      * @param \Illuminate\Support\Collection|null $data
      * @return void
      */
-    public function run(string $table, string $typeDB, string $urlAPI, string $project, string $secret, string $task, ?\Illuminate\Support\Collection $data=null)
+    public function run(string $table, string $typeDB, string $urlAPI, string $project, string $secret, string $task, ?\Illuminate\Support\Collection $data = null)
     {
         $journal = new JournalService($typeDB, $project, 'list-adv-objects');
         $journal->startTask();
@@ -54,7 +54,7 @@ class CampaignObjectService extends BaseService implements InterfaceService
             $cntToken = 0;
             $flagToken = true;
             foreach ($data as $campaign) {
-                
+
                 //--- получим токен если флаг взведен
                 if ($flagToken) {
                     $header = [
@@ -78,8 +78,8 @@ class CampaignObjectService extends BaseService implements InterfaceService
                             'fk_campaign_id' => $campaign->id
                         ];
                     }
-                } catch(AuthException $e){
-                    if($cntToken > 3) {
+                } catch (AuthException $e) {
+                    if ($cntToken > 3) {
                         throw new Exception("токен протух > 3 - [ {$e->getMessage()} ]", $e->getCode());
                     }
 

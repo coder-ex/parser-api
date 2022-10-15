@@ -119,12 +119,12 @@ class ReportStockService extends BaseService implements InterfaceService
 
             //--- пишем report-stocks
             foreach (array_chunk($dataDB, 1000) as $chunk) {
-                $this->repository->insertTable($table, $typeDB, $chunk);
+                $this->repository->insert($table, $typeDB, $chunk);
             }
 
             //--- пишем catalog-report-stocks
             foreach (array_chunk($catalogDB, 1000) as $chunk) {
-                $this->repository->insertTable("ozon_{$name_project}_catalog_report_stocks", $typeDB, $chunk);
+                $this->repository->insert("ozon_{$name_project}_catalog_report_stocks", $typeDB, $chunk);
             }
         } catch (Exception | ErrorException | Http500Exception $e) {
             $journal->upTask('ERROR', $e->getMessage());
