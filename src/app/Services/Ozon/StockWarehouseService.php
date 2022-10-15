@@ -54,7 +54,7 @@ class StockWarehouseService extends BaseService implements InterfaceService
             if (!is_null($dateCach)) {
                 $diff = strtotime($dateCach) - (strtotime($dateCach) % 86400);
                 if (strtotime(date('Y-m-d')) == $diff) {
-                    $journal->upTask('OK');         // обновим запись в журнале
+                    $journal->upTask('OK', 'данных нет');       // обновим запись в журнале
                     return;
                 }
             } else {
@@ -62,7 +62,7 @@ class StockWarehouseService extends BaseService implements InterfaceService
                 if (!is_null($oldData)) {
                     $diff = strtotime($oldData->{'date'}) - (strtotime($oldData->{'date'}) % 86400);
                     if (strtotime(date('Y-m-d')) == $diff) {
-                        $journal->upTask('OK');     // обновим запись в журнале
+                        $journal->upTask('OK', 'данных нет');   // обновим запись в журнале
                         return;
                     }
                 }

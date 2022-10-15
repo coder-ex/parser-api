@@ -1,39 +1,3 @@
-<?php
-
-namespace App\Services\Ozon;
-
-use App\Repositories\Ozon\OzonRepository;
-use App\Services\Base\BaseService;
-use App\Services\Base\InterfaceService;
-use App\Services\Exceptions\AuthException;
-use App\Services\Export\JournalService;
-use App\Services\Ozon\Traits\FetchDataFromAPI;
-use Illuminate\Support\Str;
-use ErrorException;
-use Exception;
-
-/** статистика по продуктовым кампаниям */
-class StatExpenseCampaignService extends BaseService implements InterfaceService
-{
-    use FetchDataFromAPI;
-
-    /**
-     * конструктор
-     *
-     * @param [type] $repository
-     */
-    public function __construct(
-        private OzonRepository $repository = new OzonRepository(),
-    ) {
-        parent::__construct();
-        date_default_timezone_set('UTC');   // Ozon работает по UTC
-    }
-
-    public function __destruct()
-    {
-        unset($this->repository);
-    }
-
     /**
      * обработка по методу get /api/client/statistics/expense
      *  1. в данной выгрузке есть особенность: данные Ozon по этому методу отдает максимум за прошлые сутки (вчерашний from <= to)
@@ -78,10 +42,27 @@ class StatExpenseCampaignService extends BaseService implements InterfaceService
         try {
             //--- расчетные константы
             $range = 86400 * 1;
+            $diff = strtotime($to) - strtotime($from);
+
+            $length = (($diff / $range) < 1) ? 1 : (int)($diff / $range) + 1;
 
             $offset = strtotime($from);
 
+            $cntToken = 0;
+            $flagToken = true;
             while (true) {
+
+                //--- получим токен если флаг взведен
+                if ($flagToken) {
+                    $header = [
+                        'Content-Type' => 'application/json',
+                        'Accept' => '*/*',
+                        'Authorization' => 'Bearer ' . OzonToken::getToken($urlAPI, $project, $secret),
+                    ];
+
+                    $flagToken = false;
+                }
+
                 $dateFROM = $offset;
                 $dateTO = null;
 
@@ -96,34 +77,16 @@ class StatExpenseCampaignService extends BaseService implements InterfaceService
 
                 echo "dateFROM: ", date('Y-m-d H:i:s', $dateFROM), " | dateTO: ", date('Y-m-d H:i:s', $dateTO), "\n";
 
-                $cntToken = 0;
-                $flagToken = true;
-                while (true) {
-                    //--- получим токен если флаг взведен
-                    if ($flagToken) {
-                        $header = [
-                            'Content-Type' => 'application/json',
-                            'Accept' => '*/*',
-                            'Authorization' => 'Bearer ' . OzonToken::getToken($urlAPI, $project, $secret),
-                        ];
-
-                        $flagToken = false;
+                try {
+                    $file = $this->fetchToAPIFile($url, $header);
+                } catch (AuthException $e) {
+                    if ($cntToken > 3) {
+                        throw new Exception("токен протух > 3 - [ {$e->getMessage()} ]", $e->getCode());
                     }
 
-                    try {
-                        $file = $this->fetchToAPIFile($url, $header);
-
-                        if ($cntToken) $cntToken = 0;
-                        break;
-                    } catch (AuthException $e) {
-                        if ($cntToken > 3) {
-                            throw new Exception("токен протух, сделано {$cntToken} попытки - [ {$e->getMessage()} ]", $e->getCode());
-                        }
-
-                        $cntToken++;
-                        $flagToken = true;
-                        continue;
-                    }
+                    $cntToken++;
+                    $flagToken = true;
+                    continue;
                 }
 
                 //--- парсим csv
@@ -140,21 +103,18 @@ class StatExpenseCampaignService extends BaseService implements InterfaceService
 
                     if ($row === "") continue;
 
-                    $dataDB[] = [
-                        ...$sz->serialize(explode($sep, $row), $project),
-                        'id' => Str::uuid()
-                    ];
+                    $dataDB[] = $sz->serialize(explode($sep, $row), $project);
                 }
 
                 foreach (array_chunk($dataDB, 1000) as $unit) {
-                    $this->repository->insert($table, $typeDB, $unit);
+                    $this->repository->insertTable($table, $typeDB, $unit);
                 }
 
-                // //--- запишем самую свежую дату в кэш для оптимизации метода, срок экспирации 30 суток
-                // $date = DB::connection($typeDB)->table($table)->where('project_id', $project)->orderBy('date', 'desc')->first()?->date;
-                // if (!is_null($date)) {
-                //     cachePut($table, $project, $date, "{$task} : {$project}");
-                // }
+                //--- запишем самую свежую дату в кэш для оптимизации метода, срок экспирации 30 суток
+                $date = DB::connection($typeDB)->table($table)->where('project_id', $project)->orderBy('date', 'desc')->first()?->date;
+                if (!is_null($date)) {
+                    cachePut($table, $project, $date, "{$task} : {$project}");
+                }
 
                 $offset = $offset + $range;
 
@@ -170,9 +130,3 @@ class StatExpenseCampaignService extends BaseService implements InterfaceService
 
         unset($dataDB);
     }
-
-    public function createUrl(string $urlAPI, ?string $from = '', ?string $to = ''): string
-    {
-        return "{$urlAPI}/api/client/statistics/expense?dateFrom={$from}&dateTo={$to}";
-    }
-}

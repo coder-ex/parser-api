@@ -11,6 +11,11 @@ use phpDocumentor\Reflection\DocBlock\Tags\Generic;
 trait FetchDataFromAPI
 {
     protected int $attempts = 100;
+    protected int $cnt403 = 0;
+    protected int $cnt404 = 0;
+    protected int $cnt429 = 0;
+    protected int $cnt500 = 0;
+    protected int $cnt504 = 0;
 
     /**
      * Undocumented function
@@ -28,35 +33,14 @@ trait FetchDataFromAPI
         set_time_limit(0);
         ini_set('memory_limit', '1024M');
 
-        $count = 0;
         do {
             $options = ['connect_timeout' => 30, 'timeout' => 120];
             $response = Http::withOptions($options)->withHeaders($header)->withBody($body, 'application/json')->post($url);
 
-            if ($response->status() >= 400) {
-                if ($response->status() == 403) {
-                    throw new AuthException('The token is rotten', 403);
-                } elseif ($response->status() == 404) {
-                    throw new Http404Exception('Not Found', 404);
-                } elseif ($response->status() == 429 || $response->status() == 500) {     // error 429 слишком много запросов / error 500 сервер не доступен
-                    if ($count > $this->attempts) {
-                        $response->throw();
-                    }
-
-                    sleep(5);   // делаем паузу в 5 сек для тестироания
-                    $count++;
-
-                    echo "N. ", $count, " | вышли на повторный запрос 429 | 500 \n";
-
-                    continue;
-                } else {                                // какая то неизвестная ошибка
-                    $response->throw();
-                }
-            }
-
+            if(!$this->handlerResponse($response)) continue;
+            //---
             return $response->body();
 
-            break;
         } while (true);
     }
 
@@ -68,31 +52,11 @@ trait FetchDataFromAPI
         set_time_limit(0);
         ini_set('memory_limit', '1024M');
 
-        $count = 0;
         do {
             $options = ['connect_timeout' => 60, 'timeout' => 180];
             $response = Http::withOptions($options)->withHeaders($header)->get($url);
 
-            if ($response->status() >= 400) {
-                if ($response->status() == 403) {
-                    throw new AuthException('The token is rotten', 403);
-                } elseif ($response->status() == 404) {
-                    throw new Http404Exception('Not Found', 404);
-                } elseif ($response->status() == 429 || $response->status() == 500) {     // error 429 слишком много запросов / error 500 сервер не доступен
-                    if ($count > $this->attempts) {
-                        $response->throw();
-                    }
-
-                    sleep(5);   // делаем паузу в 5 сек для тестироания
-                    $count++;
-
-                    echo "N. ", $count, " | вышли на повторный запрос 429 | 500 \n";
-
-                    continue;
-                } else {                                // какая то неизвестная ошибка
-                    $response->throw();
-                }
-            }
+            if(!$this->handlerResponse($response)) continue;
 
             return $response->body();
 
@@ -113,28 +77,7 @@ trait FetchDataFromAPI
             $options = ['connect_timeout' => 60, 'timeout' => 180];
             $response = Http::withOptions($options)->withHeaders($header)->get($url);
 
-            if ($response->status() >= 400) {
-                if ($response->status() == 403) {
-                    throw new AuthException('The token is rotten', 403);
-                } elseif ($response->status() == 404) {
-                    throw new Http404Exception('Not Found', 404);
-                } elseif ($response->status() == 429 || $response->status() == 500) {     // error 429 слишком много запросов / error 500 сервер не доступен
-                    if ($count > $this->attempts) {
-                        $response->throw();
-                    }
-
-                    sleep(5);   // делаем паузу в 5 сек для тестироания
-                    $count++;
-
-                    echo "N. ", $count, " | вышли на повторный запрос\n";
-
-                    continue;
-                } elseif ($response->status() == 404) {
-                    yield [];
-                } else {                                // какая то неизвестная ошибка
-                    $response->throw();
-                }
-            }
+            if(!$this->handlerResponse($response)) continue;
 
             $json = $response->json();
 
@@ -173,23 +116,7 @@ trait FetchDataFromAPI
             $options = ['connect_timeout' => 30, 'timeout' => 120];
             $response = Http::withOptions($options)->withHeaders($header)->withBody($body, 'application/json')->post($url);
 
-            if ($response->status() >= 400) {
-                if ($response->serverError()) { // error 500
-                    if ($count > $this->attempts) {
-                        $response->throw();
-                    }
-
-                    //sleep(180);  // лимит запросов свыше 1000 1 раз в 3 минуты
-                    sleep(1);   // какая то проблема с Ozon, если 1000 значений запрашиваем, то постоянно ошибка 500
-                    $count++;
-
-                    echo "N. ", $count, " | вышли на повторный запрос\n";
-
-                    continue;
-                } else {
-                    $response->throw();
-                }
-            }
+            if(!$this->handlerResponse($response)) continue;
 
             $json = $response->json();
 
@@ -332,35 +259,88 @@ trait FetchDataFromAPI
         } while (true);
     }
 
-    // /**
-    //  * создание url API
-    //  *
-    //  * @param string $urlAPI шаблон url от API Roistat
-    //  * @param string $task задача
-    //  * @param string $secret
-    //  * @param string $project
-    //  * @param string $from
-    //  * @param string $to
-    //  * @return string|null
-    //  */
-    // protected function createUrl(string $apiURL, string $task, string $secret = '', string $project = '', string $from = '', string $to = ''): string|null
-    // {
-    //     if ($task === 'stock-warehouses') {
-    //         return $apiURL . "/v3/product/info/stocks";
-    //     } elseif ($task === 'fbo-list') {
-    //         return $apiURL . "/v2/posting/fbo/list";
-    //     } elseif ($task === 'ListOfGoodsID') {
-    //         return $apiURL . "/v2/product/info/list";
-    //     } elseif ($task === 'campaign') {
-    //         return "{$apiURL}/api/client/campaign?client_secret={$secret}&client_id={$project}";
-    //     } elseif ($task === 'statistics-media-compaign') {
-    //         return "{$apiURL}/api/client/statistics/campaign/media?from={$from}&to={$to}";
-    //     } elseif ($task === 'statistics-daily') {
-    //         return "{$apiURL}/api/client/statistics/daily?client_secret={$secret}&client_id={$project}&dateFrom={$from}&dateTo={$to}";
-    //     } elseif ($task === 'statistics-get-report') {
-    //         return "{$apiURL}/api/client/statistics/report?UUID=";
-    //     }
-    //     //---
-    //     return null;
-    // }
+    /**
+     * очистка cntXXX переменных
+     *
+     * @return void
+     */
+    private function cntClear()
+    {
+        if ($this->cnt403) $this->cnt403 = 0;
+        if ($this->cnt404) $this->cnt404 = 0;
+        if ($this->cnt429) $this->cnt429 = 0;
+        if ($this->cnt500) $this->cnt500 = 0;
+        if ($this->cnt504) $this->cnt504 = 0;
+    }
+
+    /**
+     * обработчик response
+     *
+     * @param \Illuminate\Http\Client\Response $response объект ответа сервера
+     * @return boolean
+     */
+    private function handlerResponse(\Illuminate\Http\Client\Response &$response): bool
+    {
+        if ($response->status() >= 400) {
+            if ($response->status() == 403) {
+                $this->cntClear();
+                throw new AuthException('The token is rotten', 403);
+            } elseif ($response->status() == 404) {
+                if ($this->cnt404 > 5) {
+                    $this->cntClear();
+                    throw new Http404Exception("сервер отвечает, но данных не отдает, сделано {$this->cnt404} попыток", 404);
+                }
+
+                sleep(1);   // делаем паузу в 1 сек
+                $this->cnt404++;
+
+                echo "N. ", $this->cnt404, " | вышли на повторный запрос 404 \n";
+
+                return false;
+
+            } elseif ($response->status() == 429) {     // error 429 слишком много запросов
+                if ($this->cnt429 > $this->attempts) {
+                    $this->cntClear();
+                    $response->throw();
+                }
+
+                sleep(5);   // делаем паузу в 5 сек для тестироания
+                $this->cnt429++;
+
+                echo "N. ", $this->cnt429, " | вышли на повторный запрос 429 \n";
+
+                return false;
+            } elseif ($response->status() == 500) {     // error 500 сервер не доступен
+                if ($this->cnt500 > $this->attempts) {
+                    $this->cntClear();
+                    $response->throw();
+                }
+
+                sleep(5);   // делаем паузу в 5 сек для тестироания
+                $this->cnt500++;
+
+                echo "N. ", $this->cnt500, " | вышли на повторный запрос 500 \n";
+
+                return false;
+            } elseif ($response->status() == 504) {     // error 504 промежуточный сервер (шлюз) не доступен
+                if ($this->cnt504 > $this->attempts) {
+                    $this->cntClear();
+                    $response->throw();
+                }
+
+                sleep(5);   // делаем паузу в 5 сек для тестироания
+                $this->cnt504++;
+
+                echo "N. ", $this->cnt504, " | вышли на повторный запрос 504 \n";
+
+                return false;
+            } else {                                // какая то неизвестная ошибка
+                $this->cntClear();
+                $response->throw();
+            }
+        }
+
+        $this->cntClear();
+        return true;
+    }
 }

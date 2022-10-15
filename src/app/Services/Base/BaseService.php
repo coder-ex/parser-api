@@ -24,6 +24,54 @@ abstract class BaseService
     /**
      * получение даты FROM
      * - алгоритм:
+     *  1. проверяем таблицу
+     *  2. если в таблице данных нет, то пишем с исходной даты в планировщике
+     *  3. если в таблице данные есть, то пишем по данным в таблице
+     *
+     * @param string $table таблица выгрузки
+     * @param string $typeDB тип соединения с БД (pgsql, mysql)
+     * @param string $project идентификатор проекта
+     * @param string $from дата FROM из планировщика
+     * @param string string $field поле сортировки при выборке из таблицы
+     * @param string $timezoneId таймзона, по умолчанию == 'Europe/Moscow'
+     * @return string
+     */
+    public function getDateFrom(string $table, string $typeDB,  string $project, string $from, string $field, string $timezoneId = 'Europe/Moscow'): string
+    {
+        date_default_timezone_set($timezoneId);                         // для коррекции тайм-зоны
+
+        try {
+            //--- п.1 вытащим последнюю дату обновления из таблицы
+            $oldData = DB::connection($typeDB)->table($table)->where('project_id', $project)->orderBy($field, 'desc')->first();
+
+            if (!is_null($oldData)) {                                   // п.3
+                return $this->formatDate($oldData->{$field}, 'Y-m-d H:i:s', $timezoneId);
+            }
+        } catch (Exception | ErrorException $e) {
+            throw $e;
+        }
+
+        //---
+        return $this->formatDate($from, 'Y-m-d H:i:s', $timezoneId);    // п.2
+    }
+
+    /**
+     * форматирование даты под DateTime и таймзону
+     *
+     * @param string $date дата/время
+     * @param [type] $format формат даты/время в RFC
+     * @param string $timezoneId используемая таймзона
+     * @return string
+     */
+    public function formatDate(string $date, ?string $format = \DateTime::RFC3339, ?string $timezoneId = 'Europe/Moscow'): string
+    {
+        date_default_timezone_set($timezoneId);                     // для коррекции тайм-зоны
+        return date($format, strtotime($date));
+    }
+
+    /**
+     * получение даты FROM
+     * - алгоритм:
      *  1. проверяем кеш
      *  2. проверяем таблицу
      *  3. если в кеш есть, а в таблице нет, то пишем с исходной даты в планировщике
@@ -39,7 +87,7 @@ abstract class BaseService
      * @param string $timezoneId таймзона, по умолчанию == 'Europe/Moscow'
      * @return string
      */
-    public function getDateFrom(string $table, string $typeDB,  string $project, string $from, string $field, string $timezoneId = 'Europe/Moscow'): string
+    public function getDateFrom_OLD(string $table, string $typeDB,  string $project, string $from, string $field, string $timezoneId = 'Europe/Moscow'): string
     {
         date_default_timezone_set($timezoneId);                         // для коррекции тайм-зоны
 
@@ -66,41 +114,4 @@ abstract class BaseService
         //---
         return date('Y-m-d H:i:s', strtotime($from));                   // если данных нет в кеше и в таблицах, то получим с установленной даты для задачи в планировщике
     }
-
-    /**
-     * форматирование даты под DateTime и таймзону
-     *
-     * @param string $date дата/время
-     * @param [type] $format формат даты/время в RFC
-     * @param string $timezoneId используемая таймзона
-     * @return string
-     */
-    public function formatDate(string $date, ?string $format = \DateTime::RFC3339, ?string $timezoneId = 'Europe/Moscow'): string
-    {
-        date_default_timezone_set($timezoneId);                     // для коррекции тайм-зоны
-        return date($format, strtotime($date));
-    }
-
-    /*
-    public function createUrl(string $apiURL, string $task, ?string $secret = '', ?string $project = '', ?string $from = '', ?string $to = ''): string|null
-    {
-        if ($task === 'stock-warehouses') {
-            return $apiURL . "/v3/product/info/stocks";
-        } elseif ($task === 'fbo-list') {
-            return $apiURL . "/v2/posting/fbo/list";
-        } elseif ($task === 'ListOfGoodsID') {
-            return $apiURL . "/v2/product/info/list";
-        } elseif ($task === 'campaign') {
-            return "{$apiURL}/api/client/campaign?client_secret={$secret}&client_id={$project}";
-        } elseif ($task === 'statistics-media-compaign') {
-            return "{$apiURL}/api/client/statistics/campaign/media?from={$from}&to={$to}";
-        } elseif ($task === 'statistics-daily') {
-            return "{$apiURL}/api/client/statistics/daily?client_secret={$secret}&client_id={$project}&dateFrom={$from}&dateTo={$to}";
-        } elseif ($task === 'statistics-get-report') {
-            return "{$apiURL}/api/client/statistics/report?UUID=";
-        }
-        //---
-        return null;
-    }
-    */
 }

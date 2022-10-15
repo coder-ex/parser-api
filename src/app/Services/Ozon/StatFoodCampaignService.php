@@ -6,8 +6,10 @@ use App\Repositories\Ozon\OzonRepository;
 use App\Services\Base\BaseService;
 use App\Services\Base\InterfaceService;
 use App\Services\Exceptions\AuthException;
+use App\Services\Exceptions\Http404Exception;
 use App\Services\Export\JournalService;
 use App\Services\Ozon\Traits\FetchDataFromAPI;
+use Illuminate\Support\Str;
 use ErrorException;
 use Exception;
 
@@ -46,15 +48,15 @@ class StatFoodCampaignService extends BaseService implements InterfaceService
      * @param string|null $to по какую дату/время (всегда по текущее дату/время)
      * @return void
      */
-    public function run(string $table, string $typeDB, string $urlAPI, string $project, string $secret, string $task, ?string $from='', ?string $to='')
+    public function run(string $table, string $typeDB, string $urlAPI, string $project, string $secret, string $task, ?string $from = '', ?string $to = '')
     {
         $sz = new Serializer($task, $this->debug);
 
         $journal = new JournalService($typeDB, $project, $task);
         $journal->startTask();
 
-        $from = date('Y-m-d\TH:i:s.v\Z', strtotime($this->getDateFrom($table, $typeDB, $project, $from, 'published_at', 'Europe/Moscow')));
-        $to = date('Y-m-d\TH:i:s.v\Z', strtotime($to) + 86400 - 1);     // метод допускает заброс в будущее по времени $to (плюс сутки минус 1 сек)
+        $from = date('Y-m-d\TH:i:s.v\Z', strtotime($this->getDateFrom($table, $typeDB, $project, $from, 'published_at', 'UTC')) + 86400);
+        $to = date('Y-m-d\TH:i:s.v\Z', strtotime($to));     // метод допускает заброс в будущее по времени $to (плюс сутки минус 1 сек)
 
         if (strtotime($from) >= strtotime($to)) {
             echo "на участке from: ", date('Y-m-d H:i:s', strtotime($from)), " | to: ", date('Y-m-d H:i:s', strtotime($to)), " размер данных == 0\n";
@@ -65,58 +67,61 @@ class StatFoodCampaignService extends BaseService implements InterfaceService
         try {
             //--- расчетные константы
             $range = 86400 * 1;
-            $diff = strtotime($to) - strtotime($from);
-
-            $length = (($diff / $range) < 1) ? 1 : (int)($diff / $range);
-            if (
-                $diff % $range > 0 && $length > 1 ||
-                $diff % $range > 0 && ($diff / $range) >= 1
-            ) {
-                $length++;
-            }
+            $diff = strtotime($from) % 86400;
+            $dateFROM = $dateTO = 0;
 
             $offset = strtotime($from);
 
-            $complete = false;
-            $cntToken = 0;
-            $flagToken = true;
-            for ($j = 0; $j < $length; $j++) {
-                
-                //--- получим токен если флаг взведен
-                if($flagToken) {
-                    $header = [
-                        'Content-Type' => 'application/json',
-                        'Accept' => '*/*',
-                        'Authorization' => 'Bearer ' . OzonToken::getToken($urlAPI, $project, $secret),
-                    ];
-                    
-                    $flagToken = false;
+            while (true) {
+                if ($diff == 0) {
+                    if ($offset >= strtotime($to)) {
+                        break;
+                    }
+
+                    $dateFROM = $offset;
+                    $dateTO = $dateFROM + $range -1;
+                } elseif ($diff > 0) {
+                    $dateFROM = $offset;
+                    $dateTO = $dateFROM + $range - $diff -1;
+                    $diff = 0;
                 }
 
-                $dateFROM = $offset;
-                $dateTO = null;
-
-                if ((strtotime($to) - 86400) < $dateFROM + $range) {
+                if ($dateTO > strtotime($to)) {
                     $dateTO = strtotime($to);
-                    $complete = true;
-                } else {
-                    $dateTO = $dateFROM + $range;
                 }
 
                 $url = $this->createUrl($urlAPI, date('Y-m-d\TH:i:s.v\Z', $dateFROM), date('Y-m-d\TH:i:s.v\Z', $dateTO));
 
                 echo "dateFROM: ", date('Y-m-d H:i:s', $dateFROM), " | dateTO: ", date('Y-m-d H:i:s', $dateTO), "\n";
 
-                try {
-                    $file = $this->fetchToAPIFile($url, $header);
-                } catch (AuthException $e) {
-                    if($cntToken > 3) {
-                        throw new Exception("токен протух > 3 - [ {$e->getMessage()} ]", $e->getCode());
+                $cntToken = 0;
+                $flagToken = true;
+                while (true) {
+                    //--- получим токен если флаг взведен
+                    if ($flagToken) {
+                        $header = [
+                            'Content-Type' => 'application/json',
+                            'Accept' => '*/*',
+                            'Authorization' => 'Bearer ' . OzonToken::getToken($urlAPI, $project, $secret),
+                        ];
+
+                        $flagToken = false;
                     }
 
-                    $cntToken++;                    
-                    $flagToken = true;
-                    continue;
+                    try {
+                        $file = $this->fetchToAPIFile($url, $header);
+
+                        if ($cntToken) $cntToken = 0;
+                        break;
+                    } catch (AuthException $e) {
+                        if ($cntToken > 3) {
+                            throw new Exception("токен протух, сделано {$cntToken} попытки - [ {$e->getMessage()} ]", $e->getCode());
+                        }
+
+                        $cntToken++;
+                        $flagToken = true;
+                        continue;
+                    }
                 }
 
                 //--- парсим csv
@@ -134,23 +139,24 @@ class StatFoodCampaignService extends BaseService implements InterfaceService
                     if ($row === "") continue;
 
                     $row = date('Y-m-d H:i:s', $dateFROM) . ';' . $row;
-                    $dataDB[] = $sz->serialize(explode($sep, $row), $project);
+                    $dataDB[] = [
+                        ...$sz->serialize(explode($sep, $row), $project),
+                        'id' => Str::uuid()
+                    ];
                 }
 
                 foreach (array_chunk($dataDB, 1000) as $unit) {
-                    $this->repository->insertTable($table, $typeDB, $unit);
+                    $this->repository->insert($table, $typeDB, $unit);
                 }
 
                 //--- запишем самую свежую дату в кэш для оптимизации метода, срок экспирации 30 суток
-                cachePut($table, $project, date('Y-m-d H:i:s', $dateTO - 86400), "{$task} : {$project}");
+                //cachePut($table, $project, date('Y-m-d H:i:s', $dateTO - 86400), "{$task} : {$project}");
 
-                $offset = $dateTO;
+                $offset = $offset + $range;
 
                 unset($dataDB);
-
-                if ($complete) break;
             }
-        } catch (Exception | ErrorException $e) {
+        } catch (Http404Exception | Exception | ErrorException $e) {
             $journal->upTask('ERROR', $e->getMessage());
             outMsg($task, 'error.', $e->getMessage(), $this->debug);
             return;
@@ -161,7 +167,7 @@ class StatFoodCampaignService extends BaseService implements InterfaceService
         unset($dataDB);
     }
 
-    public function createUrl(string $urlAPI, ?string $from='', ?string $to=''): string
+    public function createUrl(string $urlAPI, ?string $from = '', ?string $to = ''): string
     {
         return "{$urlAPI}/api/client/statistics/campaign/product?from={$from}&to={$to}";
     }
