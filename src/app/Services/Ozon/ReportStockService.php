@@ -130,14 +130,6 @@ class ReportStockService extends BaseService implements InterfaceService
             foreach (array_chunk($catalogDB, 1000) as $chunk) {
                 $this->repository->insert("ozon_{$name_project}_catalog_report_stocks", $typeDB, $chunk);
             }
-
-            //--- подготовим справочник складов
-            $this->clearFildWarehouse($catalogDB, "fk_ozon_{$name_project}_report_stocks_id");
-
-            //--- пишем в справочник ref-warehouses
-            foreach (array_chunk($catalogDB, 1000) as $chunk) {
-                $this->repository->upsert("ozon_{$name_project}_ref_warehouses", $typeDB, $chunk);
-            }
         } catch (Exception | ErrorException | Http500Exception $e) {
             $journal->upTask('ERROR', $e->getMessage());
             outMsg($task, 'error.', $e->getMessage(), $this->debug);
@@ -159,29 +151,6 @@ class ReportStockService extends BaseService implements InterfaceService
         return "{$urlAPI}/v1/report/info";
     }
 
-    private function clearFildWarehouse(array &$data, string $fkTbl)
-    {
-        foreach ($data as $key => $value) {
-            unset($data[$key]['id']);
-            unset($data[$key]['value']);
-            unset($data[$key][$fkTbl]);
-        }
-
-        $data = array_map('unserialize', array_unique(array_map('serialize', $data)));
-
-        foreach ($data as $key => $value) {
-            $name = explode(' на складе ', $value['name'])[1];
-            $name = explode(',', $name)[0];
-            $data[$key]['name'] = $name;
-        }
-
-        $data = array_map('unserialize', array_unique(array_map('serialize', $data)));
-
-        foreach ($data as $key => $value) {
-            $data[$key]['id'] = Str::uuid();
-        }
-    }
-
     /**
      * очистка таблиц
      *
@@ -196,8 +165,8 @@ class ReportStockService extends BaseService implements InterfaceService
         try {
             DB::connection($typeDB)->table($table1)->where('project_id', $project)->delete();
 
-            if (DB::connection($typeDB)->table($table2)->where('project_id', $project)->get()->count() > 0) {
-                DB::connection($typeDB)->table($table2)->where('project_id', $project)->delete();
+            if (DB::connection($typeDB)->table($table2)->get()->count() > 0) {
+                DB::connection($typeDB)->table($table2)->delete();
             }
         } catch (Exception $e) {
             throw $e;

@@ -5,6 +5,7 @@ namespace App\Console\Commands\Ozon;
 use App\Helpers\TypeTask;
 use App\Jobs\OZONProcess;
 use App\Services\Export\SystemService;
+use App\Services\Ozon\RefWarehouseService;
 use App\Services\Ozon\ReportStockService;
 use Illuminate\Console\Command;
 
@@ -61,6 +62,7 @@ class OzonLoadReportStock extends Command
         //OZONProcess::dispatchAfterResponse($table, $typeDB, $task->url, $project_id, $task->secret, $task->task);
 
         (new ReportStockService())->run($table, $typeDB, $task->url, $project_id, $task->secret, $task->task);
+        (new RefWarehouseService())->run('', $typeDB, $task->url, $project_id, $task->secret, $task->task);
 
         $this->info("Команда завершена");
         $this->newLine();

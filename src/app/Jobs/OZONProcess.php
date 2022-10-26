@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Helpers\TypeTask;
 use App\Services\Ozon\CampaignService;
 use App\Services\Ozon\FboListService;
+use App\Services\Ozon\RefWarehouseService;
 use App\Services\Ozon\ReportStockService;
 use App\Services\Ozon\StatDailyService;
 use App\Services\Ozon\StatExpenseCampaignService;
@@ -28,7 +29,7 @@ class OZONProcess implements ShouldQueue
      */
     public function __construct(
         private string $table,
-        private string $typeBD,
+        private string $typeDB,
         private string $urlAPI,
         private string $project,
         private string $secret,
@@ -50,14 +51,17 @@ class OZONProcess implements ShouldQueue
     public function handle()
     {
         match ($this->task) {
-            TypeTask::StockWarehouses->value => (new StockWarehouseService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->limit),
-            TypeTask::FboList->value => (new FboListService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo, $this->limit),
-            TypeTask::StatDaily->value => (new StatDailyService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
-            TypeTask::Campaign->value => (new CampaignService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task),
-            TypeTask::StatMediaCampaign->value => (new StatMediaCampaignService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
-            TypeTask::StatFoodCampaign->value => (new StatFoodCampaignService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
-            TypeTask::StatExpenseCampaign->value => (new StatExpenseCampaignService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
-            TypeTask::ReportStocks->value => (new ReportStockService())->run($this->table, $this->typeBD, $this->urlAPI, $this->project, $this->secret, $this->task),
+            TypeTask::StockWarehouses->value => (new StockWarehouseService())->run($this->table, $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task, $this->limit),
+            TypeTask::FboList->value => (new FboListService())->run($this->table, $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo, $this->limit),
+            TypeTask::StatDaily->value => (new StatDailyService())->run($this->table, $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
+            TypeTask::Campaign->value => (new CampaignService())->run($this->table, $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task),
+            TypeTask::StatMediaCampaign->value => (new StatMediaCampaignService())->run($this->table, $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
+            TypeTask::StatFoodCampaign->value => (new StatFoodCampaignService())->run($this->table, $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
+            TypeTask::StatExpenseCampaign->value => (new StatExpenseCampaignService())->run($this->table, $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task, $this->dateFrom, $this->dateTo),
+            TypeTask::ReportStocks->value => [
+                (new ReportStockService())->run($this->table, $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task),
+                (new RefWarehouseService())->run('', $this->typeDB, $this->urlAPI, $this->project, $this->secret, $this->task)
+            ],
         };
     }
 }
