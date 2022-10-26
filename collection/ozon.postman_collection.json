@@ -498,6 +498,30 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "New - Отчёт по заказам",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "New - Cтатус отчёта",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "New - Получить отчёты",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }

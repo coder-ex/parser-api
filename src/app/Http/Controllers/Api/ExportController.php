@@ -12,6 +12,7 @@ use App\Services\Ozon\Entities\CampaignObjectEntity;
 use App\Services\Ozon\Entities\CatalogReportStockEntity;
 use App\Services\Ozon\Entities\FboListEntity;
 use App\Services\Ozon\Entities\ProductEntity;
+use App\Services\Ozon\Entities\RefWarehouseEntity;
 use App\Services\Ozon\Entities\ReportStockEntity;
 use App\Services\Ozon\Entities\StatGetReportEntity;
 use App\Services\Ozon\Entities\StatisticsDailyEntity;
@@ -283,6 +284,8 @@ class ExportController extends Controller
         $entity = new ReportStockEntity($this->typeDB, $name, 'ozon', 'report_stocks');             // ставим впереди т.к. это связь с catalog_report_stocks
         $entity->up();
         $entity = new CatalogReportStockEntity($this->typeDB, $name, 'ozon', 'catalog_report_stocks', 'report_stocks');
+        $entity->up();
+        $entity = new RefWarehouseEntity($this->typeDB, $name, 'ozon', 'ref_warehouses');           // справочник дубль CatalogReportStockEntity
         $entity->up();
         unset($entity);
     }
