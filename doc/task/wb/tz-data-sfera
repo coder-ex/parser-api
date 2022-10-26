@@ -17,3 +17,6 @@ select `odid`, `saleID`, count(*), `lastChangeDate` from `wb_spbtt_sales` group 
 
 orders:
 select "odid", "lastChangeDate", count(*) from wb_panfilov_orders group by "odid", "lastChangeDate" HAVING count(*) > 1 order by "odid" asc
+
+incomes: ПРОВЕРИТЬ !!
+Ну вообще связка полей incomeid, supplierarticle, techsize, warehousename

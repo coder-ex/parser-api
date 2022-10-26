@@ -24,5 +24,7 @@ class IncomeEntity extends BaseEntity
         $table->string('warehouseName', 50)->nullable();
         $table->unsignedBigInteger('nmId')->nullable();
         $table->string('status', 50)->nullable();
+
+        $table->unique(['incomeId', 'supplierArticle', 'techSize']);    // убрал название ключа т.к. будут проблемы с другими таблицами
     }
 }

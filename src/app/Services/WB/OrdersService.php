@@ -75,7 +75,7 @@ class OrdersService extends BaseService implements InterfaceService
             $newDataDB = $processing->check($dataDB, $project);
 
             foreach (array_chunk($newDataDB, 1000) as $chunk) {
-                $this->repository->upsertTable($table, $typeDB, $chunk);
+                $this->repository->upsertOrders($table, $typeDB, $chunk);
             }
         } catch (Exception | ErrorException $e) {
             $journal->upTask('ERROR', $e->getMessage());
