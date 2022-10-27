@@ -58,6 +58,12 @@ class ReportStockService extends BaseService implements InterfaceService
      */
     public function run(string $table, string $typeDB, string $urlAPI, string $project, string $secret, string $task)
     {
+        //--- проблемы с памятью
+        $time_limit = ini_get('max_execution_time');
+        $memory_limit = ini_get('memory_limit');
+        set_time_limit(0);
+        ini_set('memory_limit', '1024M');
+
         $sz = new Serializer($task, $this->debug);
 
         $journal = new JournalService($typeDB, $project, $task);

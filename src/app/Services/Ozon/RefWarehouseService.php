@@ -54,7 +54,7 @@ class RefWarehouseService extends BaseService implements InterfaceService
         set_time_limit(0);
         ini_set('memory_limit', -1);
 
-        $journal = new JournalService($typeDB, $project, $task);
+        $journal = new JournalService($typeDB, $project, $task.'-ref-warehouses');
         $journal->startTask();
 
         try {
