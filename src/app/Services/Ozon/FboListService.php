@@ -186,8 +186,8 @@ class FboListService extends BaseService implements InterfaceService
         try {
             DB::connection($typeDB)->table($tblFboList)->where('project_id', $project)->delete();
 
-            if (DB::connection($typeDB)->table($tblProduct)->where('project_id', $project)->get()->count() > 0) {
-                DB::connection($typeDB)->table($tblProduct)->where('project_id', $project)->delete();
+            if (DB::connection($typeDB)->table($tblProduct)->get()->count() > 0) {
+                DB::connection($typeDB)->table($tblProduct)->delete();
             }
         } catch (Exception $e) {
             throw $e;

@@ -59,16 +59,17 @@ class ReportStockService extends BaseService implements InterfaceService
      */
     public function run(string $table, string $typeDB, string $urlAPI, string $project, string $secret, string $task)
     {
-        //--- проблемы с памятью
-        $time_limit = ini_get('max_execution_time');
-        $memory_limit = ini_get('memory_limit');
-        set_time_limit(0);
-        ini_set('memory_limit', -1);
-
         $sz = new Serializer($task, $this->debug);
 
         $journal = new JournalService($typeDB, $project, $task);
         $journal->startTask();
+
+        //--- вырезаем json из массива и собираем данные в массив по json для записи
+        $serviceRepository = new ServiceRepository();
+        $name_project = $serviceRepository->getProjects($typeDB, $project)?->first()?->name;
+
+        //--- очистим таблицы от истории по проекту
+        $this->clearTable($typeDB, $project, $table, "ozon_{$name_project}_catalog_report_stocks");
 
         $header = [
             'Content-Type' => 'application/json',
@@ -103,13 +104,6 @@ class ReportStockService extends BaseService implements InterfaceService
                     'id' => Str::uuid(),
                 ];
             }
-
-            //--- вырезаем json из массива и собираем данные в массив по json для записи
-            $serviceRepository = new ServiceRepository();
-            $name_project = $serviceRepository->getProjects($typeDB, $project)?->first()?->name;
-
-            //--- очистим таблицы от истории по проекту
-            $this->clearTable($typeDB, $project, $table, "ozon_{$name_project}_catalog_report_stocks");
 
             $catalogDB = [];
             foreach ($dataDB as $key => $value) {
