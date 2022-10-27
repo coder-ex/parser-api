@@ -306,7 +306,7 @@ trait FetchDataFromAPI
                     }
                 } elseif ($result->status === 'error') {
                     if ($count > $this->attempts) {
-                        yield [];
+                        //yield [];
                         break;
                     }
 

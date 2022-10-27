@@ -92,7 +92,7 @@ class Serializer
     /**
      * сериализатор по методу data
      *
-     * @param stdClass &$data исходный массив с данными
+     * @param stdClass $data исходный массив с данными
      * @param integer $projectId id проекта
      * @return array
      */

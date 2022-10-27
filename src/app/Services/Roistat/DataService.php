@@ -88,8 +88,7 @@ class DataService extends BaseService implements InterfaceService
                 $dateTO = strtotime($to);
                 $complete = true;
             } else {
-                $dateTO =
-                    $dateFROM + $range;
+                $dateTO = $dateFROM + $range;
             }
 
             $body = json_encode(
