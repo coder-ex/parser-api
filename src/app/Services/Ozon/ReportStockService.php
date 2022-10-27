@@ -67,9 +67,17 @@ class ReportStockService extends BaseService implements InterfaceService
         //--- вырезаем json из массива и собираем данные в массив по json для записи
         $serviceRepository = new ServiceRepository();
         $name_project = $serviceRepository->getProjects($typeDB, $project)?->first()?->name;
+        if (is_null($name_project)) {
+            $journal->upTask('OK', 'name_project == null');                     // обновим запись в журнале
+            outMsg($task, 'error.', 'name_project == null', $this->debug);      // процесс прерывать не будем, понаблюдаем
+        }
 
-        //--- очистим таблицы от истории по проекту
-        $this->clearTable($typeDB, $project, $table, "ozon_{$name_project}_catalog_report_stocks");
+        try {
+            $this->clearTable($typeDB, $project, $table, "ozon_{$name_project}_catalog_report_stocks");  // очистим таблицы перед запись нового среза данных
+        } catch (Exception $e) {
+            $journal->upTask('ERROR', $e->getMessage());
+            outMsg($task, 'error.', $e->getMessage(), $this->debug);    // процесс прерывать не будем, понаблюдаем
+        }
 
         $header = [
             'Content-Type' => 'application/json',
