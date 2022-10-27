@@ -2,7 +2,6 @@
 
 namespace App\Services\Ozon;
 
-use App\Models\Export\ExportService;
 use App\Repositories\Export\ServiceRepository;
 use App\Repositories\Ozon\OzonRepository;
 use App\Services\Base\BaseService;
