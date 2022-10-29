@@ -57,8 +57,8 @@ class OrdersService extends BaseService implements InterfaceService
         $from = $this->formatDate($from, timezoneId: 'Europe/Moscow');      // приведем все к одной величине
         $fromT = $this->getDateFrom($table, $typeDB,  $project, $from, $processing->classIsField($task), 'Europe/Moscow');
 
-        if (strtotime($from) < strtotime($fromT)) {                         // если история есть, сдвигаем старотовую дату на 1 неделю назад, что бы гарантировано забрать все изменения
-            $from = date('Y-m-d', strtotime($fromT) - 604800);
+        if (strtotime($from) < strtotime($fromT)) {                         // если история есть, сдвигаем старотовую дату на 90 дней назад, что бы гарантировано забрать все изменения
+            $from = date('Y-m-d', strtotime($fromT) - 7776000);
         } else {                                                            // иначе забираем с даты старта из планировщика
             $from = $fromT;
         }

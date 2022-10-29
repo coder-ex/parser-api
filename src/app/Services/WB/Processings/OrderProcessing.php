@@ -32,16 +32,26 @@ class OrderProcessing extends BaseProcessing
      */
     protected function filterNotEmptyDB(array $data, string|null $project, string|null $field)
     {
+        $count = 0;
         foreach ($data as $valData) {
             // //--- все что свежее опорной даты в полученном массиве, пишем в новый массив
             // if (strtotime($this->oldData[$field]) < strtotime($valData[$field])) {
             //     $this->newData[] = $valData;
             // }
 
+            //--- для теста
+            if ($this->debug) {
+                if (($count % 1000) == 0) {
+                    echo "[ OrderProcessing::filterNotEmptyDB ]: N. ", $count, " | идем дальше\n";
+                }
+
+                $count++;
+            }
+
             //--- если находим одинаковый то пишем его в newData[]
-            $ob = $this->dbFetch($project, $field, $valData);
-            if (!is_null($ob)) {
-                $valData['id'] = $ob->id;
+            $id = $this->dbFetch($project, $field, $valData);
+            if (!is_null($id)) {
+                $valData['id'] = $id;
                 $this->newData[] = $valData;
                 continue;
             }
@@ -57,15 +67,15 @@ class OrderProcessing extends BaseProcessing
      * @param string $project id проекта
      * @param string $field поле фильтра
      * @param array $unit элемент в массиве данных
-     * @return stdClass|null
+     * @return string|null
      */
-    private function dbFetch(string $project, string $field, array $unit): stdClass|null
+    private function dbFetch(string $project, string $field, array $unit): string|null
     {
         return DB::connection($this->typeDB)->table($this->table)
             ->where('project_id', $project)
-            ->where('lastChangeDate', $unit[$field])
+            ->where('date', $unit['date'])
             ->where('odid', $unit['odid'])
-            ->orderBy($field, 'desc')->first();
+            ->orderBy($field, 'desc')->first()?->id;
     }
 
     // /**

@@ -1,0 +1,11 @@
+Nastya Kretova 2022-10-28
+
+Проект Панфилов, создать новую выгрузку по ендпоинту (методу) https://suppliers-stats.wildberries.ru/api/v1/supplier/orders
+wb id: 42a3fab5-bee1-53e1-b2c1-aed0efd52fd0
+
+уникальность полей (связок) в таблице wb_panfilov_orders:
+"odid", "date"
+
+select "odid", "date", count(*) from wb_panfilov_orders group by "odid", "date" HAVING count(*) > 1 order by "odid" asc
+
+выгрузку делать в новую таблицу

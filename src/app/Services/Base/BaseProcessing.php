@@ -13,6 +13,7 @@ abstract class BaseProcessing
     /** фильтр при не пустой БД */
     abstract protected function filterNotEmptyDB(array $data, string|null $project, string|null $field);
 
+    protected $debug;
     protected $newData = [];
     protected $oldData = [];
 
@@ -28,6 +29,7 @@ abstract class BaseProcessing
         protected string $typeDB,
         protected string $task,
     ) {
+        $this->debug = env('APP_DEBUG');
     }
 
     public function __destruct()

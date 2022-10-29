@@ -55,7 +55,7 @@ class WbRepository extends Repository
         try {
             DB::connection($typeDB)->table($table)->upsert(
                 $data,
-                ['odid', 'lastChangeDate'],
+                ['odid', 'date'],
                 //--- в данном случае обновим все поля
                 // [
                 //     'supplierArticle', 'techSize', 'barcode', 'totalPrice',
