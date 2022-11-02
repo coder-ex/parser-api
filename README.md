@@ -1,5 +1,5 @@
 ## вводная к ТЗ
-    Парсер данных с api: wildberries, oaon, roistat
+    Парсер данных с api: wildberries, ozon, roistat
     ТЗ в каталоге задач ./task
     выгрузки данных из различных источников
     используемые таблицы и схема связей в ./doc/diagram-table_*_.dia
