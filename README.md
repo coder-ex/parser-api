@@ -1,14 +1,12 @@
 ## вводная к ТЗ
-    ИП Ельмикеев Евгений Иванович ( data-sfera )
-    https://analyti.ru/ - старый сайт
-    https://6crm.ru/ - новый сайт
+    Парсер данных с api: wildberries, oaon, roistat
     ТЗ в каталоге задач ./task
     выгрузки данных из различных источников
     используемые таблицы и схема связей в ./doc/diagram-table_*_.dia
     описание API находится в каталоге задач ./task
 
 ### стек разработки и предустановленные пакеты
-    docker + docker-compose + Nginx php-fpm +Laravel + Octane + DATABASE + pgadmin
+    docker + docker-compose + Nginx php-fpm + Laravel + Octane + DATABASE + pgadmin
     DATABASE:
         postgres 1: крутится на хосте разработки
         postgres 2: крутится на VPS сервере для тестовых ТЗ и проектов
