@@ -10,7 +10,7 @@ class ReportStockEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id');
+        $table->string('project_id')->index();
         $table->date('published_at');
         $table->string('article', 50)->index();
         $table->unsignedBigInteger('product_id')->nullable();

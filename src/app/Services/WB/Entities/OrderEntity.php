@@ -10,7 +10,7 @@ class OrderEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id', 255);
+        $table->string('project_id', 255)->index();
         $table->dateTime('date', 0)->nullable();
         $table->dateTime('lastChangeDate', 3);
         $table->string('supplierArticle', 75)->nullable();
@@ -31,6 +31,6 @@ class OrderEntity extends BaseEntity
         $table->string('gNumber', 50)->nullable();
         $table->string('sticker', 50)->nullable();
 
-        $table->unique(['odid', 'date'], 'fk_panfilov_orders_odid_date');
+        $table->unique(['odid', 'date'], "{$this->nameAPI}_{$this->name}_orders_odid_date_unique");
     }
 }

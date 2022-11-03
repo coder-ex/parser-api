@@ -10,7 +10,7 @@ class ListIntegrationEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id');
+        $table->string('project_id')->index();
         $table->string('order_id')->nullable();
         $table->string('status_name')->nullable();
         $table->string('display_name', 1000)->nullable();

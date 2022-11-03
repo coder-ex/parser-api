@@ -10,7 +10,7 @@ class StockWarehouseEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->bigInteger('project_id');
+        $table->bigInteger('project_id')->index();
         $table->dateTime('date');
         $table->string('offer_id', 255)->nullable();
         $table->bigInteger('product_id')->nullable();

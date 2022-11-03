@@ -10,7 +10,7 @@ class SaleEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id', 255);
+        $table->string('project_id', 255)->index();
         $table->dateTime('date', 0);
         $table->dateTime('lastChangeDate', 3);
         $table->string('supplierArticle', 75)->nullable();

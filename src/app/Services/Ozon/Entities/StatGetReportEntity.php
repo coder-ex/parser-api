@@ -10,7 +10,7 @@ class StatGetReportEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id');
+        $table->string('project_id')->index();
         $table->date('published_at')->nullable();               // дата получения среза
         $table->date('date')->nullable();                       // Дата
         $table->integer('order_id')->nullable();                // ID заказа

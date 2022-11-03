@@ -10,7 +10,7 @@ class DataEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id');
+        $table->string('project_id')->index();
         $table->double('marketing_cost')->default(0);
         // $table->integer('fields_work_ABC')->default(0);
         $table->datetime('dateFrom')->nullable();

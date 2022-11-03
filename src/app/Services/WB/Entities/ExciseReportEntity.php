@@ -10,7 +10,7 @@ class ExciseReportEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->unsignedBigInteger('id');
-        $table->string('project_id', 255);
+        $table->string('project_id', 255)->index();
         $table->string('inn', 50)->nullable();
         $table->double('finishedPrice', 8, 2)->default(0.00);
         $table->integer('operationTypeId')->default(0);

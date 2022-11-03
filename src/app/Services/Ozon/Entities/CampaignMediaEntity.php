@@ -10,7 +10,7 @@ class CampaignMediaEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id');
+        $table->string('project_id')->index();
         $table->dateTime('published_at');
         $table->string('campaign_id')->index();
         $table->string('title')->nullable();

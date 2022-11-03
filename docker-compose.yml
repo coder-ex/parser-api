@@ -3,8 +3,8 @@ version: "3.5"
 services:
   php:
     build: ./docker/php-fpm
-    container_name: elmikeev-php-fpm
-    image: elmikeev_api/php-fpm
+    container_name: parser-api-php-fpm
+    image: parser-api/php-fpm
     volumes:
       - ${PATH_HOST}:${PATH_CONTAINER}
       #- ${PATH_HOST}/auth.json:/home/www-data/.config/composer/auth.json
@@ -26,16 +26,16 @@ services:
   nginx:
     build:
       context: docker/nginx
-    image: elmikeev_api/http-nginx
-    container_name: elmikeev-http-nginx
+    image: parser-api/http-nginx
+    container_name: parser-api-http-nginx
     depends_on:
       - php
     volumes:
       - ${PATH_HOST}:${PATH_CONTAINER}
       - ${PATH_SERVICE}/logs/nginx:/var/log/nginx
     ports:
-      - "80:80"
-      - "443:443"
+      - "192.168.222.1:80:80"
+      - "192.168.222.1:443:443"
     networks:
       app_net:
         aliases:
