@@ -10,7 +10,7 @@ class SaleReportEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id', 255)->index();
+        $table->string('project_id', 255);
         $table->integer('realizationreport_id')->nullable();
         $table->string('suppliercontract_code', 255)->nullable();
         $table->bigInteger('rrd_id')->nullable();

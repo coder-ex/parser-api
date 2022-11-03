@@ -10,7 +10,7 @@ class FboListEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->bigInteger('project_id')->index();
+        $table->bigInteger('project_id');
         $table->string('city', 255)->nullable();
         $table->string('delivery_type', 1000)->nullable();
         $table->boolean('is_premium')->nullable();

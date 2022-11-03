@@ -10,7 +10,7 @@ class StockEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id', 255)->index();
+        $table->string('project_id', 255);
         $table->date('published_at');
         $table->dateTime('lastChangeDate', 3);
         $table->string('supplierArticle', 75)->default("");

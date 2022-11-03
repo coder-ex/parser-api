@@ -10,7 +10,7 @@ class CampaignEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id')->index();
+        $table->string('project_id');
         $table->date('published_at')->nullable();       // дата получения среза
         $table->string('campaign_id')->index();         // нужно будет сделать индексируемое поле
         $table->string('title')->index();               // индексируемое поле

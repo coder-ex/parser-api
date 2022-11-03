@@ -10,7 +10,7 @@ class StatisticsDailyEntity extends BaseEntity
     protected function addColumn(Blueprint $table)
     {
         $table->uuid('id')->primary();
-        $table->string('project_id')->index();
+        $table->string('project_id');
         $table->string('campaign_id');
         $table->string('name', 1000)->nullable();
         $table->date('date')->index()->nullable();
