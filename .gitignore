@@ -12,4 +12,4 @@
 
 !/doc/task/project?
 #!/doc/task/registry-data-sfera
-!doc/**/tz-registry-data-sfera
+!/doc/task/registry-data-sfera/tz-registry-data-sfera
