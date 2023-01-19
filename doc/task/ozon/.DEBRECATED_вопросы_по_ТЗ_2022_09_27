@@ -1,7 +1,0 @@
-1. не понятно для чего п.2, где он применяется
-2. во вложении ответ по API из п.3 по https://performance.ozon.ru:443/api/client/statistics/phrases (Отчет по фразам)
-3. во вложении ответы по API по предложенным далее Анной предположительным эндпоинтам API:
-https://performance.ozon.ru:443/api/client/statistics/campaign/product
-https://performance.ozon.ru:443/api/client/statistics/expense
-
-нужно посмотреть, есть ли ожидаемые данные в указанных выше ответах по API
