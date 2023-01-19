@@ -4,10 +4,10 @@
 /service/
 /tmp-src/
 
+/doc/*
 !/doc/task/project
 !/doc/task/registry-data-sfera/*
 !/doc/diagram-table/*
-/doc/*
 !/doc/developer-data-sfera.dia
 !/doc/sql_primer
 !/doc/howto-docker
