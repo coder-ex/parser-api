@@ -21,7 +21,7 @@ class StockEntity extends BaseEntity
         $table->boolean('isRealization')->default(false);
         $table->integer('quantityFull')->default(0);
         $table->integer('quantityNotInOrders')->default(0);
-        $table->unsignedBigInteger('warehouse');
+        $table->unsignedBigInteger('warehouse')->nullable();
         $table->string('warehouseName', 50);
         $table->integer('inWayToClient')->default(0);
         $table->integer('inWayFromClient')->default(0);

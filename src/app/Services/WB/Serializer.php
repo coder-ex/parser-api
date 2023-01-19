@@ -220,11 +220,11 @@ class Serializer
             $res['isSupply'] = $data['isSupply'] ?? null;
             $res['isRealization'] = $data['isRealization'] ?? null;
             $res['quantityFull'] = $data['quantityFull'] ?? null;
-            $res['quantityNotInOrders'] = $data['quantityNotInOrders'] ?? null;
-            $res['warehouse'] = $data['warehouse'];
+            $res['quantityNotInOrders'] = $data['quantityNotInOrders'] ?? 0;
+            $res['warehouse'] = $data['warehouse'] ?? null;
             $res['warehouseName'] = $data['warehouseName'];
-            $res['inWayToClient'] = $data['inWayToClient'] ?? null;
-            $res['inWayFromClient'] = $data['inWayFromClient'] ?? null;
+            $res['inWayToClient'] = $data['inWayToClient'] ?? 0;
+            $res['inWayFromClient'] = $data['inWayFromClient'] ?? 0;
             $res['nmId'] = $data['nmId'];
             $res['subject'] = $data['subject'] ?? null;
             $res['category'] = $data['category'] ?? null;

@@ -3,7 +3,10 @@
 /.git/
 /service/
 /tmp-src/
-/doc/**/readmy
-/doc/**/secret_tz
-/doc/secret_server
-/doc/**/*.ods
+/doc/*
+!/doc/developer-data-sfera.dia
+!/doc/task/project
+!/doc/task/registry-data-sfera/*
+!/doc/diagram-table/*
+!/doc/sql_primer
+!/doc/howto-docker
