@@ -5,11 +5,10 @@
 /tmp-src/
 
 /doc/*
-!/doc/task/project.txt
-!doc/task/registry-data-sfera/
-
-!/doc/diagram-table
-
 !/doc/developer-data-sfera.dia
 !/doc/sql_primer
 !/doc/howto-docker
+!/doc/diagram-table
+
+!/doc/task/project?
+!/doc/task/registry-data-sfera
