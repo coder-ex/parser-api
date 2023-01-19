@@ -3,10 +3,11 @@
 /.git/
 /service/
 /tmp-src/
-/doc/*
-!/doc/developer-data-sfera.dia
+
 !/doc/task/project
 !/doc/task/registry-data-sfera/*
-!/doc/**/*.dia
+!/doc/diagram-table/*
+/doc/*
+!/doc/developer-data-sfera.dia
 !/doc/sql_primer
 !/doc/howto-docker
