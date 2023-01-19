@@ -11,4 +11,5 @@
 !/doc/diagram-table
 
 !/doc/task/project?
-!/doc/task/registry-data-sfera
+#!/doc/task/registry-data-sfera
+!doc/**/tz-registry-data-sfera
