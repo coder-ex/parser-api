@@ -6,7 +6,7 @@
 
 /doc/*
 !/doc/task/project.txt
-!doc/registry-data-sfera/*.*
+!doc/task/registry-data-sfera/
 
 !/doc/diagram-table
 
