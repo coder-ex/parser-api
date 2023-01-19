@@ -5,7 +5,7 @@
 /tmp-src/
 
 /doc/*
-!/doc/task/project.*
+!/doc/task/project.txt
 !/doc/task/registry-data-sfera
 !/doc/diagram-table
 
